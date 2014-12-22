@@ -8,6 +8,7 @@ After copying the files to the master directory, it will commit the changes,
 and push them to Github.
 """
 import subprocess as sp
+import os
 import os.path
 import shutil
 import datetime
@@ -39,21 +40,25 @@ ls()
 cmd = ('git reset HEAD %s' % source_dir).split()
 sp.call(cmd)
 ls()
-# now move the contents from source_dir into the current dir
-objects_to_move = os.listdir(source_dir)
-for object_to_move in objects_to_move:
-    shutil.move(os.path.join(source_dir, object_to_move),
-                '.')
+# now copy the contents from source_dir into the current dir
+for (dirpath, dirnames, filenames) in os.walk(source_dir):
+    # these are the subdirectories RELATIVE to source_dir
+    subdirs = [os.path.relpath(os.path.join(dirpath, dirname), source_dir)
+               for dirname in dirnames]
+    for filename in filenames:
+        this_file = os.path.join(dirpath, filename)
+        this_file_rel = os.path.relpath(this_file, source_dir)
+        shutil.copy2(this_file, this_file_rel)
 ls()
 # remove source_dir
 shutil.rmtree(source_dir)
-# stage the new files for commit
-cmd = 'git add .'.split()
-sp.call(cmd)
-# commit the new files
-today = datetime.date.today()
-cmd = ('git commit -m "changed on %s"' % today).split()
-sp.call(cmd)
-# push back to Github
-cmd = 'git push'.split()
-sp.call(cmd)
+# # stage the new files for commit
+# cmd = 'git add .'.split()
+# sp.call(cmd)
+# # commit the new files
+# today = datetime.date.today()
+# cmd = ('git commit -m "changed on %s"' % today).split()
+# sp.call(cmd)
+# # push back to Github
+# cmd = 'git push'.split()
+# sp.call(cmd)
