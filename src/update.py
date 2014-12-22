@@ -47,9 +47,12 @@ for object_to_move in objects_to_move:
 ls()
 # remove source_dir
 shutil.rmtree(source_dir)
+# stage the new files for commit
+cmd = 'git add .'.split()
+sp.call(cmd)
 # commit the new files
 today = datetime.date.today()
-cmd = ('git commit -a -m "changed on %s"' % today).split()
+cmd = ('git commit -m "changed on %s"' % today).split()
 sp.call(cmd)
 # push back to Github
 cmd = 'git push'.split()
