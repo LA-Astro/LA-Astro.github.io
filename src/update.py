@@ -14,15 +14,9 @@ import shutil
 import datetime
 
 
-def ls():
-    sp.call(['ls'])
-    print '-'*70
-
 # make sure we are in the master branch
 cmd = 'git checkout master'.split()
 sp.call(cmd)
-ls()
-
 
 # these are associated with the source files we want to copy to master
 source_branch = 'source'
@@ -32,14 +26,12 @@ source_dir = 'output'
 cmd = ('git checkout %s -- %s' % (source_branch,
                                   source_dir)).split()
 sp.call(cmd)
-ls()
 
 # this puts things into a a subdirectory in the master branched named
 # after source_dir and stages them for commit
 # first, unstage the changes
 cmd = ('git reset HEAD %s' % source_dir).split()
 sp.call(cmd)
-ls()
 # now copy the contents from source_dir into the current dir
 for (dirpath, dirnames, filenames) in os.walk(source_dir):
     # these are the subdirectories RELATIVE to source_dir
@@ -49,7 +41,6 @@ for (dirpath, dirnames, filenames) in os.walk(source_dir):
         this_file = os.path.join(dirpath, filename)
         this_file_rel = os.path.relpath(this_file, source_dir)
         shutil.copy2(this_file, this_file_rel)
-ls()
 # remove source_dir
 shutil.rmtree(source_dir)
 # stage the new files for commit
